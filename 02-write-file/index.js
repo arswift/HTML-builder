@@ -25,4 +25,7 @@ stdin.on('data', data => {
 });
 
 process.on('exit', () => stdout.write('Удачи в изучении Node.js!'));
-process.on('SIGINT', () => process.exit());
+process.on('SIGINT', () => {
+    stdout.write('\n');
+    process.exit();
+})

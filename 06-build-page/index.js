@@ -9,38 +9,33 @@ const templatePath = path.join(__dirname, 'template.html');
 
 const createFolder = (url) => mkdir(url, { recursive: true });
 
-const copyFolder = (srcName) => {
+const copyFolder = async (srcName) => {
     const targetPath = path.join(destPath, srcName);
     const srcPath = path.join(__dirname, srcName);
 
+    try {
+        await rm(targetPath, { recursive: true });
+    } catch (error) {
+        ;
+    }
 
     createFolder(targetPath)
-        .then(() => cleanFolder(targetPath))
         .then(() => copyFiles(srcPath, targetPath));
 }
 
-const cleanFolder = (url) => {
-    readdir(url, {withFileTypes: true}).then(async (files) => {
-        for (let file of files) {
-            const filePath = path.join(url, file.name);
-            if (file.isDirectory()) rm(filePath, { recursive: true });
-            if (file.isFile()) rm(filePath);
-        }
-    })
-}
 
-const copyFiles = (urlSrc, urlDest) => {
-    readdir(urlSrc, {withFileTypes: true}).then(async (files) => {
-        for (let file of files) {
-            const fileDestPath = path.join(urlDest, file.name);
-            const fileSrcPath = path.join(urlSrc, file.name);
-            if (file.isFile()) copyFile(fileSrcPath, fileDestPath);
-            if (file.isDirectory()) {
-                createFolder(path.join(urlDest, file.name));
-                copyFiles(fileSrcPath, fileDestPath);
+const copyFiles = async (urlSrc, urlDest) => {
+    let files = await readdir(urlSrc, {withFileTypes: true});
+
+    for (let file of files) {
+        const fileDestPath = path.join(urlDest, file.name);
+        const fileSrcPath = path.join(urlSrc, file.name);
+        if (file.isFile()) copyFile(fileSrcPath, fileDestPath);
+        if (file.isDirectory()) {
+            createFolder(path.join(urlDest, file.name));
+            copyFiles(fileSrcPath, fileDestPath);
         } 
-        }
-    })
+    }
 }
 
 const createBundle = (bundleName) => writeFile(path.join(destPath, bundleName), '');
