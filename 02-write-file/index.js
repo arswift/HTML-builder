@@ -13,7 +13,7 @@ fs.writeFile(
 stdout.write('Write your data here:\n');
 
 stdin.on('data', data => {
-    const dataStringified = data.toString().trim();
+    const dataStringified = data.toString();
     fs.appendFile (
         path.join(__dirname, 'test.txt'),
         dataStringified,
@@ -21,7 +21,7 @@ stdin.on('data', data => {
             if (err) throw err;
         }
     );
-    if (dataStringified === 'exit') process.exit();
+    if (dataStringified.trim() === 'exit') process.exit();
 });
 
 process.on('exit', () => stdout.write('Удачи в изучении Node.js!'));
