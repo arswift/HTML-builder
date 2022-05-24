@@ -3,7 +3,7 @@ const pathToSource = path.join(__dirname, 'files');
 const pathToCopy = path.join(__dirname, 'files-copy');
 const { mkdir, readdir, unlink, copyFile } = require('fs/promises');
 
-const reCreateFolder = () => mkdir(pathToCopy, { recursive: true });
+const createFolder = () => mkdir(pathToCopy, { recursive: true });
 
 const cleanDestinationFolder = () => {
     readdir(pathToCopy).then(files => {
@@ -14,7 +14,7 @@ const cleanDestinationFolder = () => {
     })
 }
 
-const reCopyFiles = () => {
+const copyFiles = () => {
     readdir(pathToSource).then(files => {
         files.forEach(file => {
             const pathToFile = path.join(pathToSource, file);
@@ -23,7 +23,7 @@ const reCopyFiles = () => {
     })
 }
 
-reCreateFolder()
+createFolder()
     .then(() => cleanDestinationFolder())
-    .then(() => reCopyFiles())
+    .then(() => copyFiles())
     .catch(error => {throw error});
